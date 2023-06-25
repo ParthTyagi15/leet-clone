@@ -1,44 +1,51 @@
-import { problems } from "@/mockProblems/problems";
+"use client";
+import { firestore } from "@/firebase/firebase";
+import { DBProblem } from "@/utils/types/problem";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsCheckCircle } from "react-icons/bs";
-type ProblemsTableProps = {};
+type ProblemsTableProps = {
+  setLoadingProblem: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-const ProblemsTable: React.FC<ProblemsTableProps> = () => {
+const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
+  const problems = useGetProblems(setLoadingProblem);
+
   return (
     <>
       <tbody className="text-white">
-        {problems.map((doc, idx) => {
+        {problems.map((problem, idx) => {
           const difficulyColor =
-            doc.difficulty === "Easy"
+            problem.difficulty === "Easy"
               ? "text-dark-green-s"
-              : doc.difficulty === "Medium"
+              : problem.difficulty === "Medium"
               ? "text-dark-yellow"
               : "text-dark-pink";
 
           return (
             <tr
               className={`${idx % 2 == 1 ? "bg-dark-layer-1" : ""}`}
-              key={doc.id}
+              key={problem.id}
             >
               <th className="px-2 py-4 font-medium whitespace-nowrap text-dark-green-s">
                 <BsCheckCircle fontSize={"16"} width="18" />
               </th>
               <td className="px-6 py-4">
                 <Link
-                  href={`/problems/${doc.id}`}
+                  href={`/problems/${problem.id}`}
                   className="hover:text-blue-600 cursor-pointer"
                 >
-                  {doc.title}
+                  {problem.title}
                 </Link>
               </td>
               <td className={`px-6 py-4 ${difficulyColor}`}>
-                {doc.difficulty}
+                {problem.difficulty}
               </td>
-              <td className="px-6 py-4">{doc.category}</td>
+              <td className="px-6 py-4">{problem.category}</td>
               <td className="px-6 py-4">
-                {doc.videoId ? (
-                  <Link href={`${doc.videoId}`}>
+                {problem.videoId ? (
+                  <Link href={`${problem.videoId}`}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -63,3 +70,30 @@ const ProblemsTable: React.FC<ProblemsTableProps> = () => {
   );
 };
 export default ProblemsTable;
+
+function useGetProblems(
+  setLoadingProblem: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  const [problems, setProblems] = useState<DBProblem[]>([]);
+
+  useEffect(() => {
+    const getProblems = async () => {
+      // fetching data logic
+      setLoadingProblem(true);
+      const q = query(
+        collection(firestore, "problems"),
+        orderBy("order", "asc")
+      );
+      const querySnapshot = await getDocs(q);
+      const tmp: DBProblem[] = [];
+      querySnapshot.forEach((doc) => {
+        tmp.push({ id: doc.id, ...doc.data() } as DBProblem);
+      });
+      setProblems(tmp);
+      setLoadingProblem(false);
+    };
+
+    getProblems();
+  }, [setLoadingProblem]);
+  return problems;
+}
