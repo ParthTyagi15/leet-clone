@@ -32,12 +32,22 @@ const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
                 <BsCheckCircle fontSize={"16"} width="18" />
               </th>
               <td className="px-6 py-4">
-                <Link
-                  href={`/problems/${problem.id}`}
-                  className="hover:text-blue-600 cursor-pointer"
-                >
-                  {problem.title}
-                </Link>
+                {problem.link ? (
+                  <Link
+                    href={problem.link}
+                    className="hover:text-blue-600 cursor-pointer"
+                    target="_blank"
+                  >
+                    {problem.title}
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/problems/${problem.id}`}
+                    className="hover:text-blue-600 cursor-pointer"
+                  >
+                    {problem.title}
+                  </Link>
+                )}
               </td>
               <td className={`px-6 py-4 ${difficulyColor}`}>
                 {problem.difficulty}
@@ -45,7 +55,7 @@ const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
               <td className="px-6 py-4">{problem.category}</td>
               <td className="px-6 py-4">
                 {problem.videoId ? (
-                  <Link href={`${problem.videoId}`}>
+                  <Link href={`${problem.videoId}`} target="_blank">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
