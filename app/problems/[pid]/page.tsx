@@ -1,6 +1,7 @@
 "use client";
 import Topbar from "@/components/Topbar/Topbar";
 import Workspace from "@/components/Workspace/Workspace";
+import useHasMounted from "@/hooks/useHasMounted";
 import { problems } from "@/utils/problems";
 import { Problem } from "@/utils/types/problem";
 import { notFound } from "next/navigation";
@@ -15,7 +16,7 @@ async function fetchProblem({
     return notFound();
   }
   const problem = problems[pid];
-  problem.handlerFunction = problem.handlerFunction.toString();
+  // problem.handlerFunction = problem.handlerFunction.toString();
   return problem;
 }
 

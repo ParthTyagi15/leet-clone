@@ -21,6 +21,12 @@ type PlaygroundProps = {
   setSolved: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+export interface ISettings {
+  fontSize: string;
+  settingsModalIsOpen: boolean;
+  dropdownIsOpen: boolean;
+}
+
 const Playground: React.FC<PlaygroundProps> = ({
   problem,
   setSuccess,
@@ -29,6 +35,16 @@ const Playground: React.FC<PlaygroundProps> = ({
   const [activeTestCaseId, setActiveTestCaseId] = useState<number>(0);
 
   let [userCode, setUserCode] = useState<string>(problem.starterCode);
+
+  const [fontSize, setFontSize] = useLocalStorage("editorFontSize", "16px");
+
+  const [settings, setSettings] = useState<ISettings>({
+    fontSize: fontSize,
+    settingsModalIsOpen: false,
+    dropdownIsOpen: false,
+  });
+
+  
 
   const [user] = useAuthState(auth);
 
@@ -44,27 +60,6 @@ const Playground: React.FC<PlaygroundProps> = ({
       });
       return;
     }
-    // try {
-    //   const cb = new Function(`return ${userCode}`)();
-    //   const success = problems[pid].handlerFunction(cb);
-    //   console.log(typeof success);
-    //   console.log(success);
-    //   if (success) {
-    //     console.log("success");
-    //     toast.success("Congrats! All tests passed!", {
-    //       position: "top-center",
-    //       autoClose: 3000,
-    //       theme: "dark",
-    //     });
-    //     setSuccess(true);
-    //     setTimeout(() => {
-    //       setSuccess(false);
-    //     }, 4000);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
     try {
       userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
       const cb = new Function(`return ${userCode}`)();
@@ -115,13 +110,23 @@ const Playground: React.FC<PlaygroundProps> = ({
     }
   };
 
+  useEffect(() => {
+    const code = localStorage.getItem(`code-${pid}`);
+    if (user) {
+      setUserCode(code ? JSON.parse(code) : problem.starterCode);
+    } else {
+      setUserCode(problem.starterCode);
+    }
+  }, [pid, user, problem.starterCode]);
+
   const onChange = (value: string) => {
     setUserCode(value);
+    localStorage.setItem(`code-${pid}`, JSON.stringify(value));
   };
 
   return (
     <div className="flex flex-col bg-dark-layer-1 relative overflow-x-hidden">
-      <PreferenceNavbar />
+      <PreferenceNavbar settings={settings} setSettings={setSettings} />
 
       <Split
         className="h-[calc(100vh-94px)]"
@@ -131,11 +136,11 @@ const Playground: React.FC<PlaygroundProps> = ({
       >
         <div className="w-full overflow-auto">
           <CodeMirror
-            value={problem.starterCode}
+            value={userCode}
             theme={vscodeDark}
             onChange={onChange}
             extensions={[javascript()]}
-            style={{ fontSize: 16 }}
+            style={{ fontSize: settings.fontSize }}
           />
         </div>
         <div className="w-full px-5 overflow-auto">

@@ -1,9 +1,10 @@
 "use client";
-import { firestore } from "@/firebase/firebase";
+import { auth, firestore } from "@/firebase/firebase";
 import { DBProblem } from "@/utils/types/problem";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { BsCheckCircle } from "react-icons/bs";
 type ProblemsTableProps = {
   setLoadingProblem: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,7 +12,8 @@ type ProblemsTableProps = {
 
 const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
   const problems = useGetProblems(setLoadingProblem);
-
+  const solvedProblems = useGetSolvedProblems();
+  console.log("solvedProblems",solvedProblems);
   return (
     <>
       <tbody className="text-white">
@@ -29,7 +31,7 @@ const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
               key={problem.id}
             >
               <th className="px-2 py-4 font-medium whitespace-nowrap text-dark-green-s">
-                <BsCheckCircle fontSize={"16"} width="18" />
+                {solvedProblems.includes(problem.id) && <BsCheckCircle fontSize={"16"} width="18" />}
               </th>
               <td className="px-6 py-4">
                 {problem.link ? (
@@ -55,6 +57,7 @@ const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
               <td className="px-6 py-4">{problem.category}</td>
               <td className="px-6 py-4">
                 {problem.videoId ? (
+                  // eslint-disable-next-line @next/next/link-passhref
                   <Link href={`${problem.videoId}`} target="_blank">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -106,4 +109,26 @@ function useGetProblems(
     getProblems();
   }, [setLoadingProblem]);
   return problems;
+}
+
+function useGetSolvedProblems() {
+  const [solvedProblems,setSolvedProblems] = useState<string[]>([]);
+  const [user] = useAuthState(auth);
+
+  useEffect(() => {
+    const getSolvedProblems = async () => {
+      const userRef = doc(firestore,"users",user!.uid);
+      const userDoc = await getDoc(userRef);
+
+      if(userDoc.exists()) {
+        setSolvedProblems(userDoc.data().solvedProblems);
+      }
+    };
+
+    if(user)getSolvedProblems();
+    if(!user)setSolvedProblems([]);
+
+  },[user]);
+
+  return solvedProblems;
 }
