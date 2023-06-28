@@ -1,13 +1,14 @@
-import assert from "assert";
+// import assert from "assert";
 import { Problem } from "../types/problem";
 
 export const validParenthesesHandler = (fn: any) => {
   try {
+    const assert = require("assert");
     const tests = ["()", "()[]{}", "(]", "([)]", "{[]}"];
     const answers = [true, true, false, false, true];
     for (let i = 0; i < tests.length; i++) {
       const result = fn(tests[i]);
-      assert.deepEqual(result, answers[i]);
+      assert.deepStrictEqual(result, answers[i]);
     }
     return true;
   } catch (error: any) {

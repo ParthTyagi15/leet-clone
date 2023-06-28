@@ -1,14 +1,14 @@
-import assert from "assert";
+// import assert from "assert";
 import { Problem } from "../types/problem";
 import example from "./images/reverseLL.jpg";
 
 // JS doesn't have a built in LinkedList class, so we'll create one
 class LinkedList {
-  val: number;
+  value: number;
   next: LinkedList | null;
 
   constructor(value: number) {
-    this.val = value;
+    this.value = value;
     this.next = null;
   }
 
@@ -27,12 +27,13 @@ class LinkedList {
 
 export const reverseLinkedListHandler = (fn: any) => {
   try {
+    const assert = require("assert");
     const tests = [[1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [1, 2, 3], [1]];
     const answers = [[5, 4, 3, 2, 1], [1, 2, 3, 4, 5], [3, 2, 1], [1]];
     for (let i = 0; i < tests.length; i++) {
       const list = createLinkedList(tests[i]);
       const result = fn(list);
-      assert.deepEqual(getListValues(result), answers[i]);
+      assert.deepStrictEqual(getListValues(result), answers[i]);
     }
     return true;
   } catch (error: any) {
@@ -58,7 +59,7 @@ function getListValues(head: LinkedList): number[] {
   const values = [];
   let current: LinkedList | null = head;
   while (current !== null) {
-    values.push(current.val);
+    values.push(current.value);
     current = current.next;
   }
   return values;
@@ -67,16 +68,13 @@ function getListValues(head: LinkedList): number[] {
 const starterCodeReverseLinkedListJS = `
 /**
  * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
  */
 // Do not edit function name
-ListNode* reverseList(ListNode* head) {
+function reverseLinkedList(head) {
   // Write your code here
 };`;
 
