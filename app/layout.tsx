@@ -1,9 +1,5 @@
-/* eslint-disable @next/next/no-sync-scripts */
-"use client";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ClientComponent from "./ClientComponent";
 import "./globals.css";
-import { RecoilRoot } from "recoil";
 
 export const metadata = {
   title: "Leet-Clone",
@@ -18,10 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <RecoilRoot>
-          <ToastContainer />
-          {children}
-        </RecoilRoot>
+        <ClientComponent>{children}</ClientComponent>
       </body>
     </html>
   );
