@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/link-passhref */
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/link-passhref */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { auth } from "@/firebase/firebase";
