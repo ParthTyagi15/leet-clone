@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/link-passhref */
-/* eslint-disable @next/next/no-img-element */
 "use client";
+import Image from "next/image";
 import { auth } from "@/firebase/firebase";
 import Link from "next/link";
 import React, { useCallback } from "react";
@@ -55,8 +54,8 @@ const Topbar: React.FC<TopbarProps> = ({ ProblemPage }) => {
       <div
         className={`flex w-full items-center justify-between "max-w-[1200px] mx-auto" : ""}`}
       >
-        <Link href="/" className="h-[22px] flex-1">
-          <img src="/logo-full.png" alt="Logo" className="h-full" />
+        <Link href="/" className="h-[22px] flex-1" passHref>
+          <Image src="/logo-full.png" alt="Logo" height={100} width={100} />
         </Link>
 
         {ProblemPage && (
@@ -70,6 +69,7 @@ const Topbar: React.FC<TopbarProps> = ({ ProblemPage }) => {
             <Link
               href="/"
               className="flex items-center gap-2 font-medium max-w-[150px] text-dark-gray-8 cursor-pointer"
+              passHref
             >
               <div>
                 <BsList />
@@ -101,12 +101,13 @@ const Topbar: React.FC<TopbarProps> = ({ ProblemPage }) => {
             <Link
               href="/auth"
               onClick={() => {
-                setAuthModalState((prev) => ({
+                setAuthModalState((prev: any) => ({
                   ...prev,
                   isOpen: true,
                   type: "login",
                 }));
               }}
+              passHref
             >
               <button className="bg-dark-fill-3 py-1 px-2 cursor-pointer rounded ">
                 Sign In
@@ -115,10 +116,12 @@ const Topbar: React.FC<TopbarProps> = ({ ProblemPage }) => {
           )}
           {user && (
             <div className="cursor-pointer group relative">
-              <img
+              <Image
                 src="/avatar2.png"
-                alt="avatar"
-                className="h-8 w-8 rounded-full"
+                alt="Avatar"
+                width={30}
+                height={30}
+                className="rounded-full"
               />
               <div
                 className="absolute top-10 left-2/4 -translate-x-2/4  mx-auto bg-dark-layer-1 text-brand-orange p-2 rounded shadow-lg 

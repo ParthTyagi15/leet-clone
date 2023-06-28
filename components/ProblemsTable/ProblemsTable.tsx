@@ -57,8 +57,7 @@ const ProblemsTable: React.FC<ProblemsTableProps> = ({ setLoadingProblem }) => {
               <td className="px-6 py-4">{problem.category}</td>
               <td className="px-6 py-4">
                 {problem.videoId ? (
-                  // eslint-disable-next-line @next/next/link-passhref
-                  <Link href={`${problem.videoId}`} target="_blank">
+                  <Link href={`${problem.videoId}`} target="_blank" passHref>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
